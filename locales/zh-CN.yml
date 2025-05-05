@@ -1,0 +1,3 @@
+app:
+  name: 'KeyDash'
+  description: '现代、交互式及可定制的 CLI MIDI 播放器'
