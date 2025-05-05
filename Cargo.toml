@@ -1,0 +1,12 @@
+[package]
+name = "key-dash"
+version = "0.1.0"
+description = "An example generated using the simple template"
+authors = ["Cierra-Runis <byrdsaron@gmail.com>"]
+license = "MIT"
+edition = "2024"
+
+[dependencies]
+crossterm = "0.28.1"
+ratatui = "0.29.0"
+color-eyre = "0.6.3"
