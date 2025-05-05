@@ -1,3 +1,9 @@
 app:
   name: 'KeyDash'
   description: '现代、交互式及可定制的 CLI MIDI 播放器'
+  tab:
+    player: '播放器'
+    playlist: '播放列表'
+    soundfont: '音色库'
+    settings: '设置'
+    about: '关于'

@@ -1,3 +1,9 @@
 app:
   name: 'KeyDash'
   description: 'A Modern, Interactive, and Customizable MIDI Player for CLI'
+  tab:
+    player: 'Player'
+    playlist: 'Playlist'
+    soundfont: 'SoundFont'
+    settings: 'Settings'
+    about: 'About'
