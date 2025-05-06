@@ -1,8 +1,9 @@
-use std::{path::PathBuf, sync::Arc, time::Duration};
-
+use std::{path::PathBuf, time::Duration};
+mod audio;
+use audio::AudioPlayer;
 use rustysynth::SoundFont;
 
-#[derive(Debug, Default)]
+#[derive(Default)]
 pub struct Player {
     audio_player: AudioPlayer,
     is_playing: bool,
@@ -10,9 +11,12 @@ pub struct Player {
     playlists: Vec<PlayList>,
 }
 
-#[derive(Debug, Default)]
-struct AudioPlayer {
-    soundfont: Option<Arc<SoundFont>>,
+impl Player {}
+
+pub enum PlayerError {
+    AudioNoSink,
+    AudioNoFont,
+    AudioNoMidi,
 }
 
 #[derive(Debug, Default)]
