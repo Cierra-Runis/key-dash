@@ -61,6 +61,7 @@ impl App {
         match (key.modifiers, key.code) {
             (_, KeyCode::Tab) => self.next_tab(),
             (_, KeyCode::BackTab) => self.previous_tab(),
+            (_, KeyCode::Char(' ')) => self.player.toggle_play_pause(),
             (_, KeyCode::Char('q')) => self.quit(),
             // Add other key handlers here.
             _ => {}

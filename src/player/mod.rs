@@ -2,6 +2,7 @@ use std::{path::PathBuf, time::Duration};
 mod audio;
 use audio::AudioPlayer;
 use rustysynth::SoundFont;
+use strum::Display;
 
 #[derive(Default)]
 pub struct Player {
@@ -11,8 +12,29 @@ pub struct Player {
     playlists: Vec<PlayList>,
 }
 
-impl Player {}
+impl Player {
+    pub fn toggle_play_pause(&mut self) {
+        if self.is_playing {
+            self.pause();
+        } else {
+            self.play();
+        }
+    }
 
+    fn play(&mut self) -> Result<(), PlayerError> {
+        self.audio_player.play()?;
+        self.is_playing = true;
+        Ok(())
+    }
+
+    fn pause(&mut self) -> Result<(), PlayerError> {
+        self.audio_player.pause()?;
+        self.is_playing = false;
+        Ok(())
+    }
+}
+
+#[derive(Debug, Display)]
 pub enum PlayerError {
     AudioNoSink,
     AudioNoFont,
