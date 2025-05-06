@@ -40,6 +40,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Install Dependencies # https://github.com/diwic/alsa-sys?tab=readme-ov-file#installing-build-dependencies
+        run: sudo apt install libasound2-dev
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
         with:
@@ -56,6 +58,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Install Dependencies # https://github.com/diwic/alsa-sys?tab=readme-ov-file#installing-build-dependencies
+        run: sudo apt install libasound2-dev
       - name: Install Rust nightly
         uses: dtolnay/rust-toolchain@nightly
       - name: Run cargo doc
