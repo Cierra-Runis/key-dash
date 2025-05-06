@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://www.figma.com/design/xAz6ZnkUfEbnmSiOV1eItD/KeyDash-Logo?m=auto&t=88x1Dj4PDuYVMv2f-1">
-    <img src="https://raw.githubusercontent.com/Cierra-Runis/key-dash/refs/heads/main/.github/logo.svg" alt="Logo" width="172" height="172"/>
+    <img src="https://raw.githubusercontent.com/Cierra-Runis/key-dash/refs/heads/main/.github/logo.svg" alt="Logo" width="172" height="172" />
   </a>
 </p>
 
@@ -11,13 +11,13 @@
 
 <p align="center">
   <a href="https://github.com/Cierra-Runis/key-dash/stargazers">
-    <img src="https://img.shields.io/github/stars/Cierra-Runis/key-dash?color=c678dd&logoColor=e06c75&style=for-the-badge" alt="GitHub Stars">
+    <img src="https://img.shields.io/github/stars/Cierra-Runis/key-dash?color=c678dd&logoColor=e06c75&style=for-the-badge" alt="GitHub Stars" />
   </a>
   <a href="https://github.com/Cierra-Runis/key-dash/actions/workflows/ci.yml">
-    <img src="https://img.shields.io/github/actions/workflow/status/Cierra-Runis/key-dash/ci.yml?branch=main&label=tests&style=for-the-badge" alt="GitHub Actions Workflow Status">
+    <img src="https://img.shields.io/github/actions/workflow/status/Cierra-Runis/key-dash/ci.yml?branch=main&label=tests&style=for-the-badge" alt="GitHub Actions Workflow Status" />
   </a>
   <a href="https://github.com/Cierra-Runis/key-dash/releases">
-    <img src="https://img.shields.io/github/v/release/Cierra-Runis/key-dash?style=for-the-badge" alt="GitHub Latest Release">
+    <img src="https://img.shields.io/github/v/release/Cierra-Runis/key-dash?style=for-the-badge" alt="GitHub Latest Release" />
   </a>
 </p>
 
