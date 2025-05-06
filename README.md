@@ -1,6 +1,25 @@
 ## KeyDash
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A Modern, Interactive, and Customizable MIDI Player for CLI.
+
+<!-- ## Features
+
+## Installation
+
+### Using Cargo
+
+```bashE
+cargo install key-dash
+```
+
+### Using Package Manager
+
+```bash
+# Homebrew (macOS)
+brew install key-dash
+``` -->
 
 ## Recommended MIDIs
 
