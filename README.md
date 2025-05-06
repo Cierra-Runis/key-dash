@@ -1,6 +1,16 @@
-## KeyDash
+<div style="display: flex; align-items: baseline; width: 100%; justify-content: space-between">
+
+<h1>KeyDash</h1>
+
+<div style="display: flex; align-items: center; justify-content: end; gap: 1rem; flex-wrap: wrap;">
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/Cierra-Runis/key-dash/ci.yml)](https://github.com/Cierra-Runis/key-dash/actions/workflows/ci.yml)
+
+</div>
+
+</div>
 
 A Modern, Interactive, and Customizable MIDI Player for CLI.
 
