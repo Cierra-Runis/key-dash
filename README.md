@@ -5,8 +5,8 @@
 </p>
 
 <p align="center">
-A Modern, Interactive, and Customizable MIDI Player for CLI<br>
-Based on the amazing <a href="https://ratatui.rs" alt="Ratatui">Ratatui</a> package for <a>Rust</a>
+  A Modern, Interactive, and Customizable MIDI Player for CLI<br>
+  Based on the amazing <a href="https://ratatui.rs" alt="Ratatui">Ratatui</a> package for <a href="https://www.rust-lang.org">Rust</a>
 </p>
 
 <p align="center">
