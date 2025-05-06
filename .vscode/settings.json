@@ -7,6 +7,8 @@
   "cSpell.words": [
     "crossterm",
     "ratatui",
+    "rodio",
+    "rustysynth",
     "soundfont"
   ]
 }
