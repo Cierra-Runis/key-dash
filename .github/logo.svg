@@ -1,14 +1,14 @@
 <svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
   <style>
     path {
-      fill: #111;
+      fill: #282C34;
       transition-duration: 300ms;
       transition-timing-function: ease-in-out;
     }
 
     @media (prefers-color-scheme: dark) {
       path {
-        fill: #EEE;
+        fill: #abb2bf;
         transition-duration: 300ms;
         transition-timing-function: ease-in-out;
       }
