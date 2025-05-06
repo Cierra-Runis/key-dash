@@ -31,10 +31,10 @@ impl AudioPlayer {
 
         if let Some(sink) = &self.sink {
             if !sink.empty() {
-                let pos = sink.get_pos();
+                let position = sink.get_pos();
                 sink.clear();
                 let _ = self.start_playback();
-                let _ = self.seek_to(pos);
+                let _ = self.seek_to(position);
             }
         }
     }
@@ -89,11 +89,11 @@ impl AudioPlayer {
         Ok(())
     }
 
-    pub(crate) fn seek_to(&self, pos: Duration) -> Result<(), PlayerError> {
+    pub(crate) fn seek_to(&self, position: Duration) -> Result<(), PlayerError> {
         let Some(sink) = &self.sink else {
             return Err(PlayerError::AudioNoSink);
         };
-        let _ = sink.try_seek(pos);
+        let _ = sink.try_seek(position);
         Ok(())
     }
 }

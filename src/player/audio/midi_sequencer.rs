@@ -14,6 +14,7 @@ struct TrackEventWrap {
     pub track_idx: usize,
     pub event_idx: usize,
 }
+
 impl Display for TrackEventWrap {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let trk = self.track_idx;
@@ -33,8 +34,8 @@ pub struct MidiSequencer {
     /// Song position
     tick: usize,
     since_last_tick: Duration,
-    song_len: Duration,
-    song_pos: Duration,
+    song_length: Duration,
+    song_position: Duration,
 }
 
 impl MidiSequencer {
@@ -45,8 +46,8 @@ impl MidiSequencer {
             track_positions: vec![],
             tick: 0,
             since_last_tick: Duration::ZERO,
-            song_len: Duration::ZERO,
-            song_pos: Duration::ZERO,
+            song_length: Duration::ZERO,
+            song_position: Duration::ZERO,
         }
     }
 
@@ -64,7 +65,7 @@ impl MidiSequencer {
         println!("bailed: end reached");
         for (i, track) in midi_file.tracks.iter().enumerate() {
             println!(
-                "Track {i:02?} - len: {} pos: {}",
+                "Track {i:02?} - len: {} position: {}",
                 track.events().len(),
                 self.track_positions[i]
             );
@@ -80,7 +81,7 @@ impl MidiSequencer {
         self.update_song_length();
     }
 
-    pub fn update_events<R>(&mut self, event_sink: &mut R, delta_t: Duration)
+    pub fn update_events<R>(&mut self, event_sink: &mut R, delta: Duration)
     where
         R: MidiSink,
     {
@@ -88,8 +89,8 @@ impl MidiSequencer {
             return;
         };
 
-        self.song_pos += delta_t;
-        self.since_last_tick += delta_t;
+        self.song_position += delta;
+        self.since_last_tick += delta;
         let tick_duration = self.current_tick_duration();
         if self.since_last_tick >= tick_duration {
             self.since_last_tick -= tick_duration;
@@ -122,7 +123,7 @@ impl MidiSequencer {
             return;
         };
 
-        self.song_pos += self.current_tick_duration();
+        self.song_position += self.current_tick_duration();
         self.tick += 1;
 
         for wrap in events {
@@ -212,7 +213,7 @@ impl MidiSequencer {
 
     fn update_song_length(&mut self) {
         let Some(midi_file) = &self.midi_file else {
-            self.song_len = Duration::ZERO;
+            self.song_length = Duration::ZERO;
             return;
         };
 
@@ -269,18 +270,18 @@ impl MidiSequencer {
                 break;
             }
         }
-        self.song_len = duration;
+        self.song_length = duration;
     }
 
     pub const fn song_length(&self) -> Duration {
-        self.song_len
+        self.song_length
     }
 
     pub const fn song_position(&self) -> Duration {
-        self.song_pos
+        self.song_position
     }
 
-    pub fn seek_to<R>(&mut self, event_sink: &mut R, pos: Duration)
+    pub fn seek_to<R>(&mut self, event_sink: &mut R, position: Duration)
     where
         R: MidiSink,
     {
@@ -288,17 +289,17 @@ impl MidiSequencer {
             return;
         };
 
-        if pos < self.song_pos {
+        if position < self.song_position {
             self.bpm = 120.;
             self.track_positions = vec![0; midi_file.tracks.len()];
             self.tick = 0;
-            self.song_pos = Duration::ZERO;
+            self.song_position = Duration::ZERO;
             event_sink.reset();
         }
 
         self.since_last_tick = Duration::ZERO;
 
-        while self.song_pos < pos {
+        while self.song_position < position {
             self.update_events_quiet(event_sink);
         }
     }

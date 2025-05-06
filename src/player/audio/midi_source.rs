@@ -18,11 +18,11 @@ pub struct MidiSource {
     /// The midi file sequencer
     sequencer: MidiSequencer,
     /// Sample time
-    delta_t: Duration,
+    delta: Duration,
     /// We need to cache the R channel sample.
     cached_sample: f32,
     /// Which channel was played last
-    next_ch: Channel,
+    next_channel: Channel,
 }
 
 impl MidiSource {
@@ -43,9 +43,9 @@ impl MidiSource {
         let delta_t = Duration::from_secs_f64(1. / f64::from(synthesizer.get_sample_rate()));
         Self {
             synthesizer,
-            delta_t,
+            delta: delta_t,
             sequencer,
-            next_ch: Channel::L,
+            next_channel: Channel::L,
             cached_sample: 0.,
         }
     }
@@ -75,11 +75,11 @@ impl Iterator for MidiSource {
         // separately for each channel.
 
         // Left: generate both channels and store R channel sample.
-        if self.next_ch == Channel::L {
-            self.next_ch = Channel::R;
+        if self.next_channel == Channel::L {
+            self.next_channel = Channel::R;
 
             self.sequencer
-                .update_events(&mut self.synthesizer, self.delta_t);
+                .update_events(&mut self.synthesizer, self.delta);
 
             let mut left = [0.];
             let mut right = [0.];
@@ -90,8 +90,7 @@ impl Iterator for MidiSource {
         }
         // Right: Generate nothing and return cached R ch. sample.
         else {
-            self.next_ch = Channel::L;
-
+            self.next_channel = Channel::L;
             Some(self.cached_sample)
         }
     }
@@ -116,8 +115,8 @@ impl rodio::Source for MidiSource {
         Some(self.sequencer.song_length())
     }
 
-    fn try_seek(&mut self, pos: Duration) -> Result<(), rodio::source::SeekError> {
-        self.sequencer.seek_to(&mut self.synthesizer, pos);
+    fn try_seek(&mut self, position: Duration) -> Result<(), rodio::source::SeekError> {
+        self.sequencer.seek_to(&mut self.synthesizer, position);
         Ok(())
     }
 }
