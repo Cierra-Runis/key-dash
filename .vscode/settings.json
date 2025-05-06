@@ -3,5 +3,10 @@
     "locales"
   ],
   "i18n-ally.pathMatcher": "**/(*.)?{locale}.yml",
-  "i18n-ally.keystyle": "nested"
+  "i18n-ally.keystyle": "nested",
+  "cSpell.words": [
+    "crossterm",
+    "ratatui",
+    "soundfont"
+  ]
 }
