@@ -1,14 +1,18 @@
+mod tab;
+
+use crate::player::Player;
 use color_eyre::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
 use ratatui::{
     DefaultTerminal,
     buffer::Buffer,
     layout::{Constraint, Layout, Rect},
-    style::Stylize,
+    style::{Style, Stylize},
     text::Line,
-    widgets::{Block, Padding, Paragraph, Tabs, Widget},
+    widgets::{Tabs, Widget},
 };
-use strum::{Display, EnumIter, FromRepr, IntoEnumIterator};
+use strum::IntoEnumIterator;
+use tab::Tab;
 
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq, Hash)]
 enum Mode {
@@ -17,70 +21,13 @@ enum Mode {
     Quit,
 }
 
-#[derive(Default, Debug, Clone, Copy, PartialEq, Eq, Hash, Display, EnumIter, FromRepr)]
-enum Tab {
-    #[default]
-    #[strum(to_string = "app.tab.player")]
-    Player,
-    #[strum(to_string = "app.tab.playlist")]
-    Playlist,
-    #[strum(to_string = "app.tab.soundfont")]
-    SoundFont,
-    #[strum(to_string = "app.tab.settings")]
-    Settings,
-    #[strum(to_string = "app.tab.about")]
-    About,
-}
-
-impl Tab {
-    /// Get the previous tab, if there is no previous tab return the current tab.
-    fn previous(self) -> Self {
-        let current_index: usize = self as usize;
-        let previous_index = current_index.saturating_sub(1);
-        Self::from_repr(previous_index).unwrap_or(self)
-    }
-
-    /// Get the next tab, if there is no next tab return the current tab.
-    fn next(self) -> Self {
-        let current_index = self as usize;
-        let next_index = current_index.saturating_add(1);
-        Self::from_repr(next_index).unwrap_or(self)
-    }
-
-    /// A block surrounding the tab's content
-    fn block(self) -> Block<'static> {
-        Block::default().padding(Padding::uniform(1))
-    }
-}
-
-impl Widget for Tab {
-    fn render(self, area: Rect, buf: &mut Buffer) {
-        // in a real app these might be separate widgets
-        match self {
-            Self::Player => Paragraph::new("Player")
-                .block(self.block())
-                .render(area, buf),
-            Self::Playlist => Paragraph::new("Playlist")
-                .block(self.block())
-                .render(area, buf),
-            Self::SoundFont => Paragraph::new("SoundFont")
-                .block(self.block())
-                .render(area, buf),
-            Self::Settings => Paragraph::new("Settings")
-                .block(self.block())
-                .render(area, buf),
-            Self::About => Paragraph::new("About")
-                .block(self.block())
-                .render(area, buf),
-        }
-    }
-}
-
 /// The main application which holds the state and logic of the application.
 #[derive(Debug, Default)]
 pub struct App {
     mode: Mode,
     selected_tab: Tab,
+    player: Player,
+    settings: Settings,
 }
 
 impl App {
@@ -159,12 +106,12 @@ impl Widget for &App {
     ///
     /// - <https://docs.rs/ratatui/latest/ratatui/widgets/index.html>
     /// - <https://github.com/ratatui/ratatui/tree/main/ratatui-widgets/examples>
-    fn render(self, area: ratatui::layout::Rect, buf: &mut ratatui::buffer::Buffer) {
-        use Constraint::{Length, Min, Percentage};
+    fn render(self, area: Rect, buf: &mut Buffer) {
+        use Constraint::{Length, Min};
         let vertical = Layout::vertical([Length(1), Min(0), Length(1)]);
         let [header_area, inner_area, footer_area] = vertical.areas(area);
 
-        let horizontal = Layout::horizontal([Percentage(100), Min(20)]);
+        let horizontal = Layout::horizontal([Min(0), Min(1)]);
         let [tabs_area, title_area] = horizontal.areas(header_area);
 
         render_title(title_area, buf);
@@ -182,6 +129,10 @@ impl App {
         let selected_tab_index = self.selected_tab as usize;
         Tabs::new(titles)
             .select(selected_tab_index)
+            .highlight_style(Style::default().yellow())
             .render(area, buf);
     }
 }
+
+#[derive(Debug, Default)]
+struct Settings {}
