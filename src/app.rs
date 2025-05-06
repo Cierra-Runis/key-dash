@@ -86,13 +86,9 @@ pub struct App {
 impl App {
     /// Run the application's main loop.
     pub fn run(mut self, mut terminal: DefaultTerminal) -> Result<()> {
-        loop {
+        while !self.should_quit() {
             terminal.draw(|frame| frame.render_widget(&self, frame.area()))?;
             self.handle_crossterm_events()?;
-
-            if self.should_quit() {
-                break;
-            }
         }
 
         Ok(())
