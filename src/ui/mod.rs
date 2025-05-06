@@ -2,7 +2,7 @@ mod tab;
 
 use crate::player::Player;
 use color_eyre::Result;
-use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
+use crossterm::event::{self, Event as CrosstermEvent, KeyCode, KeyEvent, KeyEventKind};
 use ratatui::{
     DefaultTerminal,
     buffer::Buffer,
@@ -48,9 +48,9 @@ impl App {
     fn handle_crossterm_events(&mut self) -> Result<()> {
         match event::read()? {
             // it's important to check KeyEventKind::Press to avoid handling key release events
-            Event::Key(key) if key.kind == KeyEventKind::Press => self.on_key_event(key),
-            Event::Mouse(_) => {}
-            Event::Resize(_, _) => {}
+            CrosstermEvent::Key(key) if key.kind == KeyEventKind::Press => self.on_key_event(key),
+            CrosstermEvent::Mouse(_) => {}
+            CrosstermEvent::Resize(_, _) => {}
             _ => {}
         }
         Ok(())
