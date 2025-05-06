@@ -1,18 +1,25 @@
-<div style="display: flex; align-items: baseline; width: 100%; justify-content: space-between">
+<p align="center">
+  <a href="https://www.figma.com/design/xAz6ZnkUfEbnmSiOV1eItD/KeyDash-Logo?m=auto&t=88x1Dj4PDuYVMv2f-1">
+    <img src="https://raw.githubusercontent.com/Cierra-Runis/key-dash/refs/heads/main/.github/logo.svg" alt="Logo" width="172" height="172"/>
+  </a>
+</p>
 
-<h1>KeyDash</h1>
+<p align="center">
+A Modern, Interactive, and Customizable MIDI Player for CLI<br>
+Based on the amazing <a href="https://ratatui.rs" alt="Ratatui">Ratatui</a> package for <a>Rust</a>
+</p>
 
-<div style="display: flex; align-items: center; justify-content: end; gap: 1rem; flex-wrap: wrap;">
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
-[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/Cierra-Runis/key-dash/ci.yml)](https://github.com/Cierra-Runis/key-dash/actions/workflows/ci.yml)
-
-</div>
-
-</div>
-
-A Modern, Interactive, and Customizable MIDI Player for CLI.
+<p align="center">
+  <a href="https://github.com/Cierra-Runis/key-dash/stargazers">
+    <img src="https://img.shields.io/github/stars/Cierra-Runis/key-dash?color=c678dd&logoColor=e06c75&style=for-the-badge" alt="GitHub Stars">
+  </a>
+  <a href="https://github.com/Cierra-Runis/key-dash/actions/workflows/ci.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/Cierra-Runis/key-dash/ci.yml?branch=main&label=tests&style=for-the-badge" alt="GitHub Actions Workflow Status">
+  </a>
+  <a href="https://github.com/Cierra-Runis/key-dash/releases">
+    <img src="https://img.shields.io/github/v/release/Cierra-Runis/key-dash?style=for-the-badge" alt="GitHub Latest Release">
+  </a>
+</p>
 
 <!-- ## Features
 
