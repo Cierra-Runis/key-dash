@@ -22,7 +22,7 @@ enum Mode {
 }
 
 /// The main application which holds the state and logic of the application.
-#[derive(Debug, Default)]
+#[derive(Default)]
 pub struct App {
     mode: Mode,
     selected_tab: Tab,
@@ -107,11 +107,14 @@ impl Widget for &App {
     /// - <https://docs.rs/ratatui/latest/ratatui/widgets/index.html>
     /// - <https://github.com/ratatui/ratatui/tree/main/ratatui-widgets/examples>
     fn render(self, area: Rect, buf: &mut Buffer) {
-        use Constraint::{Length, Min};
+        use Constraint::{Length, Min, Percentage};
         let vertical = Layout::vertical([Length(1), Min(0), Length(1)]);
         let [header_area, inner_area, footer_area] = vertical.areas(area);
 
-        let horizontal = Layout::horizontal([Min(0), Min(1)]);
+        let horizontal = Layout::horizontal([
+            Percentage(100),
+            Length(t!("app.name").len().try_into().unwrap()),
+        ]);
         let [tabs_area, title_area] = horizontal.areas(header_area);
 
         render_title(title_area, buf);
