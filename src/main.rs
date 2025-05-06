@@ -1,5 +1,5 @@
-pub mod app;
 pub mod player;
+pub mod ui;
 
 // Load I18n macro, for allow you use `t!` macro in anywhere.
 #[macro_use]
@@ -22,7 +22,7 @@ async fn main() -> color_eyre::Result<()> {
 
     // Initialize the terminal
     let terminal = ratatui::init();
-    let result = app::App::default().run(terminal);
+    let result = ui::App::default().run(terminal);
     ratatui::restore();
     result
 }
