@@ -23,3 +23,8 @@ tokio = { version = "1.44.1", features = [
 ] }
 rodio = "0.20.1"
 midi-msg = "0.8.0"
+config = "0.15.11"
+serde = "1.0.219"
+tracing = "0.1.41"
+lazy_static = "1.5.0"
+dirs = "6.0.0"

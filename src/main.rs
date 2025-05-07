@@ -1,5 +1,28 @@
-mod player;
-mod ui;
+use configs::{
+    config_file::ConfigFile,
+    custom::{
+        app_custom::AppConfig, keymap_custom::KeymapConfig, logger_custom::LoggerConfig,
+        palette_custom::PaletteConfig, theme_custom::ThemeConfig,
+    },
+};
+use lazy_static::lazy_static;
+
+pub mod action;
+pub mod app_error;
+pub mod component_name;
+pub mod configs;
+pub mod event;
+pub mod player;
+pub mod ui;
+pub mod utils;
+
+lazy_static! {
+    pub static ref LOGGER_CONFIG: LoggerConfig = LoggerConfig::get_config();
+    pub static ref KEYMAP_CONFIG: KeymapConfig = KeymapConfig::get_config();
+    pub static ref APP_CONFIG: AppConfig = AppConfig::get_config();
+    pub static ref PALETTE_CONFIG: PaletteConfig = PaletteConfig::get_config();
+    pub static ref THEME_CONFIG: ThemeConfig = ThemeConfig::get_config();
+}
 
 // Load I18n macro, for allow you use `t!` macro in anywhere.
 #[macro_use]
@@ -14,6 +37,15 @@ i18n!("locales", fallback = "en");
 
 #[tokio::main]
 async fn main() -> color_eyre::Result<()> {
+    // Initialize the lazy static variables
+    // This is done to ensure that the configuration files are read only once
+    // and the values are shared across the application.
+    lazy_static::initialize(&LOGGER_CONFIG);
+    lazy_static::initialize(&KEYMAP_CONFIG);
+    lazy_static::initialize(&APP_CONFIG);
+    lazy_static::initialize(&PALETTE_CONFIG);
+    lazy_static::initialize(&THEME_CONFIG);
+
     // See: [panic example](https://github.com/ratatui/ratatui/blob/main/examples/apps/panic/src/main.rs)
     color_eyre::install()?;
 
