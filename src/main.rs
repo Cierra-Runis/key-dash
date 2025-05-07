@@ -1,5 +1,5 @@
-pub mod player;
-pub mod ui;
+mod player;
+mod ui;
 
 // Load I18n macro, for allow you use `t!` macro in anywhere.
 #[macro_use]
@@ -14,7 +14,7 @@ i18n!("locales", fallback = "en");
 
 #[tokio::main]
 async fn main() -> color_eyre::Result<()> {
-    // https://ratatui.rs/recipes/apps/color-eyre/
+    // See: [panic example](https://github.com/ratatui/ratatui/blob/main/examples/apps/panic/src/main.rs)
     color_eyre::install()?;
 
     // Initialize language
@@ -23,13 +23,13 @@ async fn main() -> color_eyre::Result<()> {
 
     // Initialize the terminal
     //
-    // This will create a new terminal and set it to raw mode:
-    //
     // - Line-buffered behavior is disabled
     // - Input passed directly to the application as it is typed
     // - No line editing
     // - No input echoing
     // - No special key combinations (e.g. Ctrl+C)
+    //
+    // See: [`ratatui::init`]
     let terminal = ratatui::init();
 
     let result = ui::App::default().run(terminal);
