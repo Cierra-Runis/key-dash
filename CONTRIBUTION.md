@@ -16,14 +16,14 @@ flowchart TD
 
     Devices["Mouse<br>Keyboard"] -- "User Input" --> TerminalBackend
 
-    Crossterm[""`Crossterm works with:
+    Crossterm["`Crossterm works with:
     - bash
     - zsh
     - fish
     - cmd
     - powershell
     - WSL
-    - etc.`""]
+    - etc.`"]
 ```
 
 ### Event Driven Architecture
