@@ -1,7 +1,7 @@
 mod tab;
 
 use crate::player::Player;
-use color_eyre::Result;
+use color_eyre::{Result, eyre::Ok};
 use crossterm::event::{self, Event as CrosstermEvent, KeyCode, KeyEvent, KeyEventKind};
 use ratatui::{
     DefaultTerminal,
@@ -47,25 +47,30 @@ impl App {
     /// [`event::poll`] function to check if there are any events available with a timeout.
     fn handle_crossterm_events(&mut self) -> Result<()> {
         match event::read()? {
-            // it's important to check KeyEventKind::Press to avoid handling key release events
+            // It's important to check [`KeyEventKind::Press`] to avoid handling key release events
             CrosstermEvent::Key(key) if key.kind == KeyEventKind::Press => self.on_key_event(key),
-            CrosstermEvent::Mouse(_) => {}
-            CrosstermEvent::Resize(_, _) => {}
-            _ => {}
-        }
+            _ => {
+                // Handle other events here if needed.
+                Ok(())
+            }
+        }?;
         Ok(())
     }
 
     /// Handles the key events and updates the state of [`App`].
-    fn on_key_event(&mut self, key: KeyEvent) {
+    fn on_key_event(&mut self, key: KeyEvent) -> Result<()> {
         match (key.modifiers, key.code) {
+            // Add other key handlers here.
             (_, KeyCode::Tab) => self.next_tab(),
             (_, KeyCode::BackTab) => self.previous_tab(),
             (_, KeyCode::Char(' ')) => self.player.toggle_play_pause(),
             (_, KeyCode::Char('q')) => self.quit(),
-            // Add other key handlers here.
+            // For testing purposes, you can uncomment the following lines to trigger a panic or an error.
+            // (_, KeyCode::Char('p')) => panic!("User triggered panic"),
+            // (_, KeyCode::Char('e')) => bail!("User triggered error"),
             _ => {}
         }
+        Ok(())
     }
 }
 
