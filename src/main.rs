@@ -14,6 +14,7 @@ i18n!("locales", fallback = "en");
 
 #[tokio::main]
 async fn main() -> color_eyre::Result<()> {
+    // https://ratatui.rs/recipes/apps/color-eyre/
     color_eyre::install()?;
 
     // Initialize language
@@ -21,8 +22,30 @@ async fn main() -> color_eyre::Result<()> {
     rust_i18n::set_locale(&locale);
 
     // Initialize the terminal
+    //
+    // This will create a new terminal and set it to raw mode:
+    //
+    // - Line-buffered behavior is disabled
+    // - Input passed directly to the application as it is typed
+    // - No line editing
+    // - No input echoing
+    // - No special key combinations (e.g. Ctrl+C)
     let terminal = ratatui::init();
+
     let result = ui::App::default().run(terminal);
-    ratatui::restore();
+
+    restore();
     result
+}
+
+/// Restores the terminal to its original state.
+///
+/// See: [`ratatui::restore`]
+fn restore() {
+    if let Err(err) = ratatui::try_restore() {
+        // There's not much we can do if restoring the terminal fails, so we just print the error
+        eprintln!(
+            "Failed to restore terminal. Run `reset` or restart your terminal to recover: {err}"
+        );
+    }
 }
