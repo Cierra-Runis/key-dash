@@ -26,13 +26,15 @@ pub struct MidiSource {
 }
 
 impl MidiSource {
+    const DEFAULT_SAMPLE_RATE: i32 = 44100;
+
     /// New `MidiSource` that immediately starts playing.
     pub fn new(sf: &Arc<SoundFont>, midi_file: MidiFile) -> Self {
         Self::with_sample_rate(sf, midi_file, Self::DEFAULT_SAMPLE_RATE)
     }
 
     /// New `MidiSource` that immediately starts playing.
-    pub fn with_sample_rate(sf: &Arc<SoundFont>, midi_file: MidiFile, sample_rate: i32) -> Self {
+    fn with_sample_rate(sf: &Arc<SoundFont>, midi_file: MidiFile, sample_rate: i32) -> Self {
         let settings = SynthesizerSettings::new(sample_rate);
         let mut synthesizer =
             Synthesizer::new(sf, &settings).expect("Could not create synthesizer");
@@ -52,12 +54,6 @@ impl MidiSource {
 
     pub const fn song_length(&self) -> Duration {
         self.sequencer.song_length()
-    }
-
-    pub const DEFAULT_SAMPLE_RATE: i32 = 44100;
-
-    pub fn sample_rate(&self) -> i32 {
-        self.synthesizer.get_sample_rate()
     }
 }
 

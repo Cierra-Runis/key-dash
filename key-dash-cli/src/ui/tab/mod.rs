@@ -1,7 +1,7 @@
 use ratatui::{
     buffer::Buffer,
     layout::Rect,
-    widgets::{Block, Padding, Paragraph, Widget},
+    widgets::{Block, BorderType, Paragraph, Widget},
 };
 use strum::{Display, EnumIter, FromRepr};
 
@@ -37,7 +37,7 @@ impl Tab {
 
     /// A block surrounding the tab's content
     fn block(self) -> Block<'static> {
-        Block::default().padding(Padding::uniform(1))
+        Block::bordered().border_type(BorderType::Rounded)
     }
 }
 

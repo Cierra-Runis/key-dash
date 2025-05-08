@@ -1,56 +1,103 @@
-use std::{path::PathBuf, time::Duration};
-mod audio;
-use audio::AudioPlayer;
+use midi_msg::{MidiFile, MidiMsg};
+use rodio::Sink;
 use rustysynth::SoundFont;
+use std::{sync::Arc, time::Duration};
 use strum::Display;
+mod audio;
 
 #[derive(Default)]
 pub struct Player {
-    audio_player: AudioPlayer,
-    is_playing: bool,
-    soundfont_list: Vec<SoundFont>,
-    playlists: Vec<PlayList>,
+    soundfont: Option<Arc<SoundFont>>,
+    midi_file: Option<MidiFile>,
+    midi_duration: Option<Duration>,
+    sink: Option<Sink>,
+    msg_callback: Option<Box<dyn Fn(MidiMsg)>>,
 }
 
 impl Player {
-    pub fn toggle_play_pause(&mut self) {
-        if self.is_playing {
-            self.pause();
-        } else {
-            self.play();
+    pub fn set_sink(&mut self, value: Option<Sink>) {
+        if let Some(ref sink) = value {
+            sink.pause();
         }
+        self.sink = value;
     }
 
-    fn play(&mut self) -> Result<(), PlayerError> {
-        self.audio_player.play()?;
-        self.is_playing = true;
+    pub fn set_soundfont(&mut self, value: Arc<SoundFont>) {
+        self.soundfont = Some(value);
+
+        if let Some(sink) = &self.sink {
+            if !sink.empty() {
+                let position = sink.get_pos();
+                sink.clear();
+                let _ = self.start_playback();
+                let _ = self.seek_to(position);
+            }
+        }
+    }
+}
+
+impl Player {
+    /// Unpause
+    pub fn play(&self) -> Result<(), PlayerError> {
+        let Some(sink) = &self.sink else {
+            return Err(PlayerError::NoSink);
+        };
+        sink.play();
         Ok(())
     }
 
-    fn pause(&mut self) -> Result<(), PlayerError> {
-        self.audio_player.pause()?;
-        self.is_playing = false;
+    /// Pause
+    pub fn pause(&self) -> Result<(), PlayerError> {
+        let Some(sink) = &self.sink else {
+            return Err(PlayerError::NoSink);
+        };
+        sink.pause();
+        Ok(())
+    }
+
+    /// Load currently selected midi & font and start playing
+    pub fn start_playback(&mut self) -> Result<(), PlayerError> {
+        let Some(soundfont) = &self.soundfont else {
+            return Err(PlayerError::NoFont);
+        };
+        let Some(midi_file) = self.midi_file.clone() else {
+            return Err(PlayerError::NoMidi);
+        };
+        let Some(sink) = &self.sink else {
+            return Err(PlayerError::NoSink);
+        };
+        let source = audio::midi_source::MidiSource::new(soundfont, midi_file);
+        self.midi_duration = Some(source.song_length());
+
+        sink.append(source);
+        sink.play();
+        Ok(())
+    }
+
+    /// Full stop.
+    pub fn stop_playback(&mut self) -> Result<(), PlayerError> {
+        let Some(sink) = &self.sink else {
+            return Err(PlayerError::NoSink);
+        };
+        self.midi_duration = None;
+        sink.clear();
+        sink.pause();
+        Ok(())
+    }
+
+    pub fn seek_to(&self, position: Duration) -> Result<(), PlayerError> {
+        let Some(sink) = &self.sink else {
+            return Err(PlayerError::NoSink);
+        };
+        let _ = sink.try_seek(position);
         Ok(())
     }
 }
 
 #[derive(Debug, Display)]
 pub enum PlayerError {
-    AudioNoSink,
-    AudioNoFont,
-    AudioNoMidi,
-}
-
-#[derive(Debug, Default)]
-struct PlayList {
-    name: String,
-    description: String,
-    midis: Vec<MidiMeta>,
-}
-
-#[derive(Debug, Default)]
-struct MidiMeta {
-    file_path: PathBuf,
-    file_size: Option<u64>,
-    duration: Option<Duration>,
+    NoSink,
+    NoFont,
+    NoMidi,
+    NoDevice,
 }

@@ -2,14 +2,12 @@ mod tab;
 
 use color_eyre::{Result, eyre::Ok};
 use crossterm::event::{self, Event as CrosstermEvent, KeyCode, KeyEvent, KeyEventKind};
-use key_dash_audio::Player;
 use ratatui::{
     DefaultTerminal,
     buffer::Buffer,
     layout::{Constraint, Layout, Rect},
-    style::{Style, Stylize},
     text::Line,
-    widgets::{Tabs, Widget},
+    widgets::{Block, BorderType, LineGauge, Tabs, Widget},
 };
 use strum::IntoEnumIterator;
 use tab::Tab;
@@ -26,7 +24,7 @@ enum Mode {
 pub struct App {
     mode: Mode,
     selected_tab: Tab,
-    player: Player,
+    // player: Player,
     settings: Settings,
 }
 
@@ -63,7 +61,7 @@ impl App {
             // Add other key handlers here.
             (_, KeyCode::Tab) => self.next_tab(),
             (_, KeyCode::BackTab) => self.previous_tab(),
-            (_, KeyCode::Char(' ')) => self.player.toggle_play_pause(),
+            // (_, KeyCode::Char(' ')) => self.player.toggle_play_pause(),
             (_, KeyCode::Char('q')) => self.quit(),
             // For testing purposes, you can uncomment the following lines to trigger a panic or an error.
             // (_, KeyCode::Char('p')) => panic!("User triggered panic"),
@@ -92,19 +90,6 @@ impl App {
     }
 }
 
-fn render_title(area: Rect, buf: &mut Buffer) {
-    let app_name = t!("app.name");
-    Line::from(app_name.blue())
-        .bold()
-        .right_aligned()
-        .render(area, buf);
-}
-
-fn render_footer(area: Rect, buf: &mut Buffer) {
-    let app_description = t!("app.description");
-    Line::from(app_description).centered().render(area, buf);
-}
-
 impl Widget for &App {
     /// Renders the user interface.
     ///
@@ -113,33 +98,26 @@ impl Widget for &App {
     /// - <https://docs.rs/ratatui/latest/ratatui/widgets/index.html>
     /// - <https://github.com/ratatui/ratatui/tree/main/ratatui-widgets/examples>
     fn render(self, area: Rect, buf: &mut Buffer) {
-        use Constraint::{Length, Min, Percentage};
-        let vertical = Layout::vertical([Length(1), Min(0), Length(1)]);
+        use Constraint::{Length, Min};
+        let vertical = Layout::vertical([Length(3), Min(0), Length(1)]);
         let [header_area, inner_area, footer_area] = vertical.areas(area);
 
-        let horizontal = Layout::horizontal([
-            Percentage(100),
-            Length(t!("app.name").len().try_into().unwrap()),
-        ]);
-        let [tabs_area, title_area] = horizontal.areas(header_area);
-
-        render_title(title_area, buf);
-        self.render_tabs(tabs_area, buf);
-        self.selected_tab.render(inner_area, buf);
-        render_footer(footer_area, buf);
-    }
-}
-
-impl App {
-    fn render_tabs(&self, area: Rect, buf: &mut Buffer) {
         let titles = Tab::iter()
             .map(|tab| t!(tab.to_string()))
             .collect::<Vec<_>>();
         let selected_tab_index = self.selected_tab as usize;
         Tabs::new(titles)
             .select(selected_tab_index)
-            .highlight_style(Style::default().yellow())
-            .render(area, buf);
+            .block(
+                Block::bordered()
+                    .border_type(BorderType::Rounded)
+                    .title(Line::from(t!("app.name")).centered()),
+            )
+            .render(header_area, buf);
+
+        self.selected_tab.render(inner_area, buf);
+
+        LineGauge::default().render(footer_area, buf);
     }
 }
 

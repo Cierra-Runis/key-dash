@@ -10,9 +10,9 @@ pub trait MidiSink {
 
 /// [`TrackEvent`] wrapper with some context for debugging.
 struct TrackEventWrap {
-    pub track_event: TrackEvent,
-    pub track_idx: usize,
-    pub event_idx: usize,
+    track_event: TrackEvent,
+    track_idx: usize,
+    event_idx: usize,
 }
 
 impl Display for TrackEventWrap {
@@ -26,6 +26,7 @@ impl Display for TrackEventWrap {
 }
 
 /// MIDI Sequencer
+#[derive(Debug)]
 pub struct MidiSequencer {
     midi_file: Option<MidiFile>,
     bpm: f64,
