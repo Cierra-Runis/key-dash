@@ -1,12 +1,12 @@
 [package]
 name = "key-dash-audio"
-version = "0.1.0"
-description = "KeyDash Audio"
-authors = ["Cierra-Runis <byrdsaron@gmail.com>"]
-license = "MIT"
-edition = "2024"
-homepage = "https://github.com/Cierra-Runis/key-dash/wiki"
-repository = "https://github.com/Cierra-Runis/key-dash"
+version = { workspace = true }
+description = { workspace = true }
+authors = { workspace = true }
+license = { workspace = true }
+edition = { workspace = true }
+homepage = { workspace = true }
+repository = { workspace = true }
 
 [dependencies]
 # External dependencies

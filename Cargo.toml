@@ -3,6 +3,15 @@ resolver = "2"
 members = ["key-dash-*"]
 default-members = ["key-dash-cli"]
 
+[workspace.package]
+version = "0.1.0"
+description = "A Modern, Interactive, and Customizable MIDI Player for CLI"
+authors = ["Cierra-Runis <byrdsaron@gmail.com>"]
+license = "MIT"
+edition = "2024"
+homepage = "https://github.com/Cierra-Runis/key-dash/wiki"
+repository = "https://github.com/Cierra-Runis/key-dash"
+
 [workspace.dependencies]
 tokio = { version = "1.45.0", features = ["full"] }
 crossterm = "0.29.0"
