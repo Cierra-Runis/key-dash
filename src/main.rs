@@ -1,3 +1,4 @@
+mod cli;
 mod player;
 mod ui;
 
@@ -20,6 +21,9 @@ async fn main() -> color_eyre::Result<()> {
     // Initialize language
     let locale = sys_locale::get_locale().unwrap_or_else(|| "en".to_string());
     rust_i18n::set_locale(&locale);
+
+    // Run Cli
+    cli::Cli::run();
 
     // Initialize the terminal
     //
