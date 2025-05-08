@@ -1,0 +1,26 @@
+[package]
+name = "key-dash-cli"
+version = "0.1.0"
+description = "KeyDash command line interface"
+authors = ["Cierra-Runis <byrdsaron@gmail.com>"]
+license = "MIT"
+edition = "2024"
+homepage = "https://github.com/Cierra-Runis/key-dash/wiki"
+repository = "https://github.com/Cierra-Runis/key-dash"
+
+[dependencies]
+key-dash-audio = { path = "../key-dash-audio" }
+
+# External dependencies
+tokio = { workspace = true }
+ratatui = { workspace = true }
+strum = { workspace = true }
+color-eyre = { workspace = true }
+crossterm = { workspace = true }
+rust-i18n = { workspace = true }
+sys-locale = { workspace = true }
+clap = { workspace = true }
+
+[[bin]]
+name = "key-dash"
+path = "src/main.rs"

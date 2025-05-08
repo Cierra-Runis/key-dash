@@ -1,5 +1,4 @@
 mod cli;
-mod player;
 mod ui;
 
 // Load I18n macro, for allow you use `t!` macro in anywhere.
@@ -11,7 +10,7 @@ extern crate rust_i18n;
 // Or you can pass arguments by `i18n!` to override it.
 // Config fallback missing translations to "en" locale.
 // Use `fallback` option to set fallback locale.
-i18n!("locales", fallback = "en");
+i18n!("./locales", fallback = "en");
 
 #[tokio::main]
 async fn main() -> color_eyre::Result<()> {

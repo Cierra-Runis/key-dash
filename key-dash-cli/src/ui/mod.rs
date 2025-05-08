@@ -1,8 +1,8 @@
 mod tab;
 
-use crate::player::Player;
 use color_eyre::{Result, eyre::Ok};
 use crossterm::event::{self, Event as CrosstermEvent, KeyCode, KeyEvent, KeyEventKind};
+use key_dash_audio::Player;
 use ratatui::{
     DefaultTerminal,
     buffer::Buffer,

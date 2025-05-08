@@ -1,0 +1,16 @@
+[package]
+name = "key-dash-audio"
+version = "0.1.0"
+description = "KeyDash Audio"
+authors = ["Cierra-Runis <byrdsaron@gmail.com>"]
+license = "MIT"
+edition = "2024"
+homepage = "https://github.com/Cierra-Runis/key-dash/wiki"
+repository = "https://github.com/Cierra-Runis/key-dash"
+
+[dependencies]
+# External dependencies
+strum = { workspace = true }
+rustysynth = { workspace = true }
+midi-msg = { workspace = true }
+rodio = { workspace = true }
