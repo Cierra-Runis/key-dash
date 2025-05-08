@@ -1,9 +1,13 @@
 use midi_msg::{MidiFile, MidiMsg};
+use midi_source::MidiSource;
 use rodio::Sink;
 use rustysynth::SoundFont;
 use std::{sync::Arc, time::Duration};
 use strum::Display;
-mod audio;
+
+mod midi_sequencer;
+mod midi_source;
+mod midi_synth;
 
 #[derive(Default)]
 pub struct Player {
@@ -66,7 +70,7 @@ impl Player {
         let Some(sink) = &self.sink else {
             return Err(PlayerError::NoSink);
         };
-        let source = audio::midi_source::MidiSource::new(soundfont, midi_file);
+        let source = MidiSource::new(soundfont, midi_file);
         self.midi_duration = Some(source.song_length());
 
         sink.append(source);
