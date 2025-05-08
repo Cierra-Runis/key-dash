@@ -42,3 +42,58 @@ flowchart
 - Disadvantages:
   - More complex implementation
   - Use of one additional thread
+
+### With Async
+
+```rust
+use chrono::{DateTime, Utc};
+use crossterm::event::{Event as CrosstermEvent, KeyCode, KeyEventKind};
+use std::{process, time::Duration};
+use tokio::sync::mpsc;
+
+enum Message {
+    Exit,
+    Timer(DateTime<Utc>),
+}
+
+#[tokio::main]
+async fn main() {
+    let (tx, mut rx) = mpsc::channel(32);
+
+    let first = tx.clone();
+    let second = tx.clone();
+
+    tokio::spawn(async move {
+        loop {
+            let crossterm_event = crossterm::event::read().unwrap();
+            match crossterm_event {
+                CrosstermEvent::Key(key) => {
+                    if key.kind == KeyEventKind::Press {
+                        match key.code {
+                            KeyCode::Char('q') => first.send(Message::Exit).await.unwrap(),
+                            KeyCode::Char(char) => println!("Key {char} Pressed"),
+                            _ => println!("Other KeyPress"),
+                        }
+                    }
+                }
+                _ => println!("Other CrosstermEvent"),
+            }
+        }
+    });
+
+    tokio::spawn(async move {
+        let mut interval = tokio::time::interval(Duration::from_secs(1));
+        loop {
+            interval.tick().await;
+            second.send(Message::Timer(Utc::now())).await.unwrap();
+        }
+    });
+
+    while let Some(message) = rx.recv().await {
+        match message {
+            Message::Timer(date_time) => println!("{date_time}"),
+            Message::Exit => process::exit(0),
+        }
+    }
+}
+```
