@@ -97,3 +97,30 @@ async fn main() {
     }
 }
 ```
+
+## Tokio
+
+- [Tokio internals: Understanding Rust's asynchronous I/O framework from the bottom up](https://cafbit.com/post/tokio_internals)
+- [【譯】Tokio 內部機制：從頭理解 Rust 非同步 I/O 框架](https://gist.github.com/ckaznable/80d1925e8ae88f1e9fd8eac70807b5d2)
+
+```mermaid
+flowchart TD
+  run(["Core::run(future)"]) --> main["Spawn a task for the provided future. This is the "main task""]
+  --> poll["Poll the main task and its future"] --> future.ready
+
+  future.ready{"Did the future return Ready(_)?"} -- "yes" --> return(["Return the result"])
+  future.ready -- "no" --> cal.timeout["Calculate a timeout duration base on the next timeout event, if any."] --> call.mio["Call mio::Poll:poll(). This blocks until events are available, or the timeout duration (if provided) has elapsed."] --> handle.due["Handle any timeouts that due."] --> events.process
+
+  events.process{"Are there events to process?"} -- "yes" --> process["Process the next event."] --> type
+  events.process -- "no" --> token.future
+
+  token.future{"Was TOKEN_FUTURE received?"} -- "yes" --> poll
+  token.future -- "no" --> cal.timeout
+
+  type{"What type of event is this?"} --> type.messages & type.future & type.io & type.spawned --> events.process
+
+  type.messages["TOKEN_MESSAGES: Clear readiness, and process the message."]
+  type.future["TOKEN_FUTURE": Clear readiness, and note the event.]
+  type.io["I/O Source Ready: Notify the I/O reader and/or writer task."]
+  type.spawned["Spawned Task Ready: Poll the associated task."]
+```
