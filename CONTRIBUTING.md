@@ -124,3 +124,8 @@ flowchart TD
   type.io["I/O Source Ready: Notify the I/O reader and/or writer task."]
   type.spawned["Spawned Task Ready: Poll the associated task."]
 ```
+
+## Learning Source
+
+- [Rust 语言圣经](https://course.rs)
+- [Rust 程序设计语言 简体中文版](https://kaisery.github.io/trpl-zh-cn)
