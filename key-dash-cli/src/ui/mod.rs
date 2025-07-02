@@ -1,39 +1,48 @@
 mod tab;
 
+use std::time::Duration;
+
 use color_eyre::{Result, eyre::Ok};
-use crossterm::event::{self, Event as CrosstermEvent, KeyCode, KeyEvent, KeyEventKind};
+use crossterm::event::{
+    Event as CrosstermEvent, EventStream as CrosstermStream, KeyCode, KeyEvent, KeyEventKind,
+};
+use key_dash_audio::Player;
 use ratatui::{
     DefaultTerminal,
     buffer::Buffer,
-    layout::{Constraint, Layout, Rect},
-    text::Line,
-    widgets::{Block, BorderType, LineGauge, Tabs, Widget},
+    layout::{Constraint, Flex, Layout, Rect},
+    text::Text,
+    widgets::Widget,
 };
-use strum::IntoEnumIterator;
-use tab::Tab;
-
-#[derive(Default, Debug, Clone, Copy, PartialEq, Eq, Hash)]
-enum Mode {
-    #[default]
-    Run,
-    Quit,
-}
+use tokio_stream::StreamExt;
 
 /// The main application which holds the state and logic of the application.
 #[derive(Default)]
 pub struct App {
-    mode: Mode,
-    selected_tab: Tab,
-    // player: Player,
-    settings: Settings,
+    should_quit: bool,
+    player: Player,
 }
 
 impl App {
+    // For controlling frame generate speed
+    const FRAMES_PER_SECOND: f32 = 120.0;
+
     /// Run the application's main loop.
-    pub fn run(mut self, mut terminal: DefaultTerminal) -> Result<()> {
-        while !self.should_quit() {
-            terminal.draw(|frame| frame.render_widget(&self, frame.area()))?;
-            self.handle_crossterm_events()?;
+    pub async fn run(mut self, mut terminal: DefaultTerminal) -> Result<()> {
+        let period = Duration::from_secs_f32(1.0 / Self::FRAMES_PER_SECOND);
+        let mut interval = tokio::time::interval(period);
+        let mut crosstermStream = CrosstermStream::new();
+        // let mut playerStream = self.player;
+
+        while !self.should_quit {
+            tokio::select! {
+                _ = interval.tick() => {
+                  terminal.draw(|frame| frame.render_widget(&self, frame.area()))?;
+                },
+                Some(event) = crosstermStream.next() => {
+                  self.handle_crossterm_events(event?)?;
+                },
+            }
         }
 
         Ok(())
@@ -43,8 +52,8 @@ impl App {
     ///
     /// If your application needs to perform work in between handling events, you can use the
     /// [`event::poll`] function to check if there are any events available with a timeout.
-    fn handle_crossterm_events(&mut self) -> Result<()> {
-        match event::read()? {
+    fn handle_crossterm_events(&mut self, event: CrosstermEvent) -> Result<()> {
+        match event {
             // It's important to check [`KeyEventKind::Press`] to avoid handling key release events
             CrosstermEvent::Key(key) if key.kind == KeyEventKind::Press => self.on_key_event(key),
             _ => {
@@ -58,35 +67,14 @@ impl App {
     /// Handles the key events and updates the state of [`App`].
     fn on_key_event(&mut self, key: KeyEvent) -> Result<()> {
         match (key.modifiers, key.code) {
-            // Add other key handlers here.
-            (_, KeyCode::Tab) => self.next_tab(),
-            (_, KeyCode::BackTab) => self.previous_tab(),
             // (_, KeyCode::Char(' ')) => self.player.toggle_play_pause(),
-            (_, KeyCode::Char('q')) => self.quit(),
+            (_, KeyCode::Char('q')) => self.should_quit = true,
             // For testing purposes, you can uncomment the following lines to trigger a panic or an error.
             // (_, KeyCode::Char('p')) => panic!("User triggered panic"),
             // (_, KeyCode::Char('e')) => bail!("User triggered error"),
             _ => {}
         }
         Ok(())
-    }
-}
-
-impl App {
-    pub fn next_tab(&mut self) {
-        self.selected_tab = self.selected_tab.next();
-    }
-
-    pub fn previous_tab(&mut self) {
-        self.selected_tab = self.selected_tab.previous();
-    }
-
-    fn should_quit(&self) -> bool {
-        self.mode == Mode::Quit
-    }
-
-    fn quit(&mut self) {
-        self.mode = Mode::Quit;
     }
 }
 
@@ -98,28 +86,23 @@ impl Widget for &App {
     /// - <https://docs.rs/ratatui/latest/ratatui/widgets/index.html>
     /// - <https://github.com/ratatui/ratatui/tree/main/ratatui-widgets/examples>
     fn render(self, area: Rect, buf: &mut Buffer) {
-        use Constraint::{Length, Min};
-        let vertical = Layout::vertical([Length(3), Min(0), Length(1)]);
-        let [header_area, inner_area, footer_area] = vertical.areas(area);
-
-        let titles = Tab::iter()
-            .map(|tab| t!(tab.to_string()))
-            .collect::<Vec<_>>();
-        let selected_tab_index = self.selected_tab as usize;
-        Tabs::new(titles)
-            .select(selected_tab_index)
-            .block(
-                Block::bordered()
-                    .border_type(BorderType::Rounded)
-                    .title(Line::from(t!("app.name")).centered()),
-            )
-            .render(header_area, buf);
-
-        self.selected_tab.render(inner_area, buf);
-
-        LineGauge::default().render(footer_area, buf);
+        let text = Text::raw("TODO");
+        let area = center(
+            area,
+            Constraint::Length(text.width() as u16),
+            Constraint::Length(1),
+        );
+        text.render(area, buf);
     }
 }
 
 #[derive(Debug, Default)]
 struct Settings {}
+
+fn center(area: Rect, horizontal: Constraint, vertical: Constraint) -> Rect {
+    let [area] = Layout::horizontal([horizontal])
+        .flex(Flex::Center)
+        .areas(area);
+    let [area] = Layout::vertical([vertical]).flex(Flex::Center).areas(area);
+    area
+}

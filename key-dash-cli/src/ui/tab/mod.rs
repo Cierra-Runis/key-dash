@@ -34,32 +34,17 @@ impl Tab {
         let next_index = current_index.saturating_add(1);
         Self::from_repr(next_index).unwrap_or(self)
     }
-
-    /// A block surrounding the tab's content
-    fn block(self) -> Block<'static> {
-        Block::bordered().border_type(BorderType::Rounded)
-    }
 }
 
 impl Widget for Tab {
     fn render(self, area: Rect, buf: &mut Buffer) {
         // in a real app these might be separate widgets
         match self {
-            Self::Player => Paragraph::new("Player")
-                .block(self.block())
-                .render(area, buf),
-            Self::Playlist => Paragraph::new("Playlist")
-                .block(self.block())
-                .render(area, buf),
-            Self::SoundFont => Paragraph::new("SoundFont")
-                .block(self.block())
-                .render(area, buf),
-            Self::Settings => Paragraph::new("Settings")
-                .block(self.block())
-                .render(area, buf),
-            Self::About => Paragraph::new("About")
-                .block(self.block())
-                .render(area, buf),
+            Self::Player => Paragraph::new("Player").render(area, buf),
+            Self::Playlist => Paragraph::new("Playlist").render(area, buf),
+            Self::SoundFont => Paragraph::new("SoundFont").render(area, buf),
+            Self::Settings => Paragraph::new("Settings").render(area, buf),
+            Self::About => Paragraph::new("About").render(area, buf),
         }
     }
 }

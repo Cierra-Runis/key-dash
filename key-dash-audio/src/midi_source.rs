@@ -29,15 +29,15 @@ impl MidiSource {
     const DEFAULT_SAMPLE_RATE: i32 = 44100;
 
     /// New `MidiSource` that immediately starts playing.
-    pub fn new(sf: &Arc<SoundFont>, midi_file: MidiFile) -> Self {
-        Self::with_sample_rate(sf, midi_file, Self::DEFAULT_SAMPLE_RATE)
+    pub fn new(soundfont: &Arc<SoundFont>, midi_file: MidiFile) -> Self {
+        Self::with_sample_rate(soundfont, midi_file, Self::DEFAULT_SAMPLE_RATE)
     }
 
     /// New `MidiSource` that immediately starts playing.
-    fn with_sample_rate(sf: &Arc<SoundFont>, midi_file: MidiFile, sample_rate: i32) -> Self {
+    fn with_sample_rate(soundfont: &Arc<SoundFont>, midi_file: MidiFile, sample_rate: i32) -> Self {
         let settings = SynthesizerSettings::new(sample_rate);
         let mut synthesizer =
-            Synthesizer::new(sf, &settings).expect("Could not create synthesizer");
+            Synthesizer::new(soundfont, &settings).expect("Could not create synthesizer");
         synthesizer.set_master_volume(1.0);
         let mut sequencer = MidiSequencer::new();
         sequencer.play(midi_file);

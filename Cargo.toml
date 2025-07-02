@@ -14,7 +14,7 @@ repository = "https://github.com/Cierra-Runis/key-dash"
 
 [workspace.dependencies]
 tokio = { version = "1.45.0", features = ["full"] }
-crossterm = "0.29.0"
+crossterm = { version = "0.29.0", features = ["event-stream"] }
 ratatui = { version = "0.29.0", features = ["all-widgets"] }
 color-eyre = "0.6.4"
 rust-i18n = "3.1.4"
@@ -24,3 +24,4 @@ strum = { version = "0.27.1", features = ["derive"] }
 rodio = "0.20.1"
 midi-msg = "0.8.0"
 clap = { version = "4.5.37", features = ["derive"] }
+tokio-stream = "0.1.17"

@@ -212,6 +212,31 @@ impl MidiSequencer {
         Duration::from_secs_f64(in_secs)
     }
 
+    /// Updates the `song_length` field by calculating the total duration of the MIDI file.
+    ///
+    /// This function iterates through all events in all tracks of the loaded MIDI file,
+    /// respecting tempo changes ([`Meta::SetTempo`] meta messages) and the timing division format
+    /// specified in the file header. It simulates playback tick-by-tick and accumulates
+    /// the real-world duration based on current tempo and time division.
+    ///
+    /// If no MIDI file is loaded, sets the duration to `Duration::ZERO`.
+    ///
+    /// ### Tempo Handling
+    ///
+    /// - Default tempo is 120 BPM.
+    /// - If a [Meta::SetTempo] meta message is encountered, the tempo is updated accordingly.
+    ///
+    /// ### Time Division Handling
+    ///
+    /// Supports both:
+    ///
+    /// - [`Division::TicksPerQuarterNote`]: standard MIDI ticks.
+    /// - [`Division::TimeCode`]: SMPTE timecode format.
+    ///
+    /// ### Performance Note
+    ///
+    /// This method simulates playback at single-tick resolution,
+    /// which may be inefficient for very long MIDI files.
     fn update_song_length(&mut self) {
         let Some(midi_file) = &self.midi_file else {
             self.song_length = Duration::ZERO;
@@ -219,39 +244,43 @@ impl MidiSequencer {
         };
 
         let mut track_positions = vec![0; midi_file.tracks.len()];
-        let mut tick = 0;
+        let mut tick = 0usize;
         let mut duration = Duration::ZERO;
-        let mut bpm = 120.;
+        let mut bpm = 120.0;
+
         loop {
             let mut done = true;
-            for (i, track) in midi_file.tracks.iter().enumerate() {
-                loop {
-                    let event_idx = track_positions[i];
-                    if event_idx >= track.len() {
-                        break;
-                    }
-                    done = false;
 
-                    let event = &track.events()[event_idx];
+            for (i, track) in midi_file.tracks.iter().enumerate() {
+                let events = track.events();
+
+                while let Some(event) = events.get(track_positions[i]) {
                     let event_tick = midi_file
                         .header
                         .division
                         .beat_or_frame_to_tick(event.beat_or_frame)
                         as usize;
-                    if tick >= event_tick {
-                        track_positions[i] += 1;
-                        #[allow(clippy::collapsible_match)]
-                        if let MidiMsg::Meta { msg } = &event.event {
-                            if let Meta::SetTempo(tempo) = msg {
-                                bpm = 60_000_000. / f64::from(*tempo);
-                            }
-                        }
-                    } else {
+
+                    if tick < event_tick {
                         break;
+                    }
+
+                    track_positions[i] += 1;
+                    done = false;
+
+                    if let MidiMsg::Meta {
+                        msg: Meta::SetTempo(tempo),
+                    } = &event.event
+                    {
+                        bpm = 60_000_000. / f64::from(*tempo);
                     }
                 }
             }
-            tick += 1;
+
+            if done {
+                break;
+            }
+
             let tick_duration = match midi_file.header.division {
                 Division::TicksPerQuarterNote(ticks) => 60. / bpm / f64::from(ticks),
                 Division::TimeCode {
@@ -266,11 +295,11 @@ impl MidiSequencer {
                     1. / fps / f64::from(ticks_per_frame)
                 }
             };
+
             duration += Duration::from_secs_f64(tick_duration);
-            if done {
-                break;
-            }
+            tick += 1;
         }
+
         self.song_length = duration;
     }
 

@@ -20,6 +20,7 @@ crossterm = { workspace = true }
 rust-i18n = { workspace = true }
 sys-locale = { workspace = true }
 clap = { workspace = true }
+tokio-stream = { workspace = true }
 
 [[bin]]
 name = "key-dash"

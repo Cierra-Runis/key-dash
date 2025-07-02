@@ -35,7 +35,7 @@ async fn main() -> color_eyre::Result<()> {
     // See: [`ratatui::init`]
     let terminal = ratatui::init();
 
-    let result = ui::App::default().run(terminal);
+    let result = ui::App::default().run(terminal).await;
 
     restore();
     result
