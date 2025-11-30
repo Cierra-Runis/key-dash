@@ -41,6 +41,7 @@ brew install key-dash
 ## Recommended MIDIs
 
 - [Rhythm Game MIDIs](http://bit.ly/3oNhYpC) by [으엨 희 / Uaaaaak](https://www.youtube.com/@uaaaaak5622)
+- [Vocaloid Songs](https://drive.google.com/drive/u/0/folders/10C0uFNKOOopnvRWgS1ba7APm33ovsTMj) by [renaseri](https://www.youtube.com/@renaseri)
 
 ## Recommended SoundFonts
 
